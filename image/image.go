@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"regexp"
 )
 
-func FromBase64(imgAsBase64 string)) (*os.File, error) {
+func FromBase64(imgAsBase64 string) (*os.File, error) {
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
 		return nil, err
@@ -33,5 +32,5 @@ func FromBase64(imgAsBase64 string)) (*os.File, error) {
 		return nil, err
 	}
 	tempfile.Write(b)
-	return tempfile
+	return tempfile, nil
 }
