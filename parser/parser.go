@@ -12,14 +12,14 @@ func init() {
 	defer client.Close()
 }
 
-// HeroName returns the hero's name given the image in base64 format.
-func HeroName(imgAsBase64 string) string {
+// HeroNameFromBase64 returns the hero's name given the image in base64 format.
+func HeroNameFromBase64(imgAsBase64 string) (string, error) {
 	client := gosseract.NewClient()
 	defer client.Close()
 
 	imgFile, err := image.FromBase64(imgAsBase64)
 	if err != nil {
-		return ""
+		return "", err
 	}
 	defer imgFile.Close()
 
@@ -33,11 +33,24 @@ func HeroName(imgAsBase64 string) string {
 	_, err = buffer.Read(bytes)
 
 	if err != nil {
-		return ""
+		return "", err
 	}
 
+	client.SetWhitelist("0123456789")
 	client.SetImageFromBytes(bytes)
 
 	heroName, _ := client.Text()
-	return heroName
+	return heroName, nil
+}
+
+// HeroNameFromBytes returns the hero's name given the image in byte format.
+func HeroNameFromBytes(imgAsBytes []byte) (string, error) {
+	client := gosseract.NewClient()
+	defer client.Close()
+
+	client.SetWhitelist("0123456789")
+	client.SetImageFromBytes(imgAsBytes)
+
+	heroName, _ := client.Text()
+	return heroName, nil
 }
