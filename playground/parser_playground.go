@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/base64"
 	"fmt"
-	"image"
 	"image/jpeg"
 	"log"
 	"main/imageutils"
@@ -16,7 +15,7 @@ func toBase64(b []byte) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func main() {
+func readFileToBytes() []byte {
 	// Read the entire file into a byte slice
 	imgPath := "./playground/data/toko_stats.jpg"
 	fileObj, err := os.Open(imgPath)
@@ -36,14 +35,19 @@ func main() {
 		fmt.Println("[buffer.Read] ", err)
 		os.Exit(1)
 	}
+	return bytes
+}
+
+func main() {
+	bytes := readFileToBytes()
 	imgObj, err := imageutils.BytesToImageObject(bytes)
 	if err != nil {
 		fmt.Println("[BytesToImageObject] ", err)
 		os.Exit(3)
 	}
-	croppedImgObj, err := imageutils.CropImage(imgObj, image.Rect(0, 40, 150, 60))
+	croppedImgObj, err := imageutils.CropToHeroName(imgObj)
 	if err != nil {
-		fmt.Println("[CropImage] ", err)
+		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
 	}
 	croppedImgBytes, err := imageutils.ImageObjectToBytes(croppedImgObj)

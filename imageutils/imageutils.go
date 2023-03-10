@@ -18,6 +18,10 @@ type SubImager interface {
 	SubImage(r image.Rectangle) image.Image
 }
 
+var (
+	cropHeroName = image.Rect(0, 40, 150, 60)
+)
+
 // Base64ToFileObject converts a base64 string representation of an iage to a file object.
 func Base64ToFileObject(imgAsBase64 string) (*os.File, error) {
 	tempfile, err := ioutil.TempFile("", "ocrserver"+"-")
@@ -89,4 +93,9 @@ func CropImage(imgObj image.Image, crop image.Rectangle) (image.Image, error) {
 		return nil, fmt.Errorf("image does not support cropping")
 	}
 	return simg.SubImage(crop), nil
+}
+
+// CropToHeroName crops a given image to the section that contains the Hero Name.
+func CropToHeroName(imgObj image.Image) (image.Image, error) {
+	return CropImage(imgObj, cropHeroName)
 }
