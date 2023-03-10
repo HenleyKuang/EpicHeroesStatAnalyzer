@@ -2,7 +2,7 @@ package parser
 
 import (
 	"bufio"
-	"main/image"
+	"main/imageutils"
 
 	"github.com/otiai10/gosseract/v2"
 )
@@ -17,7 +17,7 @@ func HeroNameFromBase64(imgAsBase64 string) (string, error) {
 	client := gosseract.NewClient()
 	defer client.Close()
 
-	imgFile, err := image.FromBase64(imgAsBase64)
+	imgFile, err := imageutils.Base64ToFileObject(imgAsBase64)
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +48,7 @@ func HeroNameFromBytes(imgAsBytes []byte) (string, error) {
 	client := gosseract.NewClient()
 	defer client.Close()
 
-	client.SetWhitelist("0123456789")
+	client.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
 	client.SetImageFromBytes(imgAsBytes)
 
 	heroName, _ := client.Text()
