@@ -9,6 +9,8 @@ import (
 	"main/imageutils"
 	"main/parser"
 	"os"
+
+	"github.com/otiai10/gosseract/v2"
 )
 
 func toBase64(b []byte) string {
@@ -45,7 +47,9 @@ func main() {
 		fmt.Println("[BytesToImageObject] ", err)
 		os.Exit(3)
 	}
+	imgObj = imageutils.ImageObjToGrayScale(imgObj)
 	croppedImgObj, err := imageutils.CropToHeroName(imgObj)
+	// croppedImgObj, err := imageutils.CropToMainStats(imgObj)
 	if err != nil {
 		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
@@ -56,7 +60,7 @@ func main() {
 		os.Exit(3)
 	}
 	// Save cropped image.
-	out, _ := os.Create("./playground/data/toko_stats_cropped.jpg")
+	out, _ := os.Create("./playground/data/toko_stats_stats_cropped.jpg")
 	defer out.Close()
 
 	var opts jpeg.Options
@@ -67,8 +71,12 @@ func main() {
 		log.Println("[jpeg.Encode] ", err)
 	}
 	// Get Hero Name.
-	heroName, err := parser.HeroNameFromBytes(croppedImgBytes)
-	// heroName, err := parser.HeroNameFromBytes(bytes)
+	alphabetClient := gosseract.NewClient()
+	alphabetClient.SetTessdataPrefix("./traineddata/")
+	alphabetClient.SetLanguage("eng")
+	alphabetClient.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+	defer alphabetClient.Close()
+	heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
 
 	// var base64Encoding string
 
@@ -93,6 +101,11 @@ func main() {
 	// heroName, err := parser.HeroNameFromBase64(base64Encoding); err != nil {
 	fmt.Println("[HeroNameFromBytes] ", err)
 	fmt.Println(heroName)
+
+	// Get stats
+	// stats, err := parser.MainStatsFromBytes(croppedImgBytes)
+	// fmt.Println("[MainStatsFromBytes] ", err)
+	// fmt.Println(stats)
 
 	// client := gosseract.NewClient()
 	// defer client.Close()

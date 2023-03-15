@@ -7,11 +7,6 @@ import (
 	"github.com/otiai10/gosseract/v2"
 )
 
-func init() {
-	client := gosseract.NewClient()
-	defer client.Close()
-}
-
 // HeroNameFromBase64 returns the hero's name given the image in base64 format.
 func HeroNameFromBase64(imgAsBase64 string) (string, error) {
 	client := gosseract.NewClient()
@@ -44,13 +39,27 @@ func HeroNameFromBase64(imgAsBase64 string) (string, error) {
 }
 
 // HeroNameFromBytes returns the hero's name given the image in byte format.
-func HeroNameFromBytes(imgAsBytes []byte) (string, error) {
+func HeroNameFromBytes(client *gosseract.Client, imgAsBytes []byte) (string, error) {
+	client.SetImageFromBytes(imgAsBytes)
+	heroName, err := client.Text()
+	if err != nil {
+		return "", err
+	}
+	return heroName, nil
+}
+
+// MainStatsFromBytes returns the list of the main stats (first 5 non-percentage stats) given the image in byte format.
+func MainStatsFromBytes(imgAsBytes []byte) (string, error) {
 	client := gosseract.NewClient()
+	client.SetTessdataPrefix("./traineddata/")
+	client.SetLanguage("eng")
 	defer client.Close()
 
-	client.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+	client.SetWhitelist("0123456789%.")
 	client.SetImageFromBytes(imgAsBytes)
-
-	heroName, _ := client.Text()
-	return heroName, nil
+	stats, err := client.Text()
+	if err != nil {
+		return "", err
+	}
+	return stats, nil
 }

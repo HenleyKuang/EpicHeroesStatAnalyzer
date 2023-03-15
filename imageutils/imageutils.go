@@ -19,7 +19,8 @@ type SubImager interface {
 }
 
 var (
-	cropHeroName = image.Rect(0, 40, 150, 60)
+	cropHeroName  = image.Rect(0, 40, 150, 60)
+	cropMainStats = image.Rect(250, 180, 330, 300)
 )
 
 // Base64ToFileObject converts a base64 string representation of an iage to a file object.
@@ -86,6 +87,21 @@ func FileObjectToImageObject(imgFile *os.File) (image.Image, error) {
 	return img, nil
 }
 
+// ImageObjToGrayScale grayscales a given image obj.
+func ImageObjToGrayScale(imgObj image.Image) *image.Gray {
+	var (
+		bounds = imgObj.Bounds()
+		gray   = image.NewGray(bounds)
+	)
+	for x := 0; x < bounds.Max.X; x++ {
+		for y := 0; y < bounds.Max.Y; y++ {
+			var rgba = imgObj.At(x, y)
+			gray.Set(x, y, rgba)
+		}
+	}
+	return gray
+}
+
 // CropImage crops a given image to a specific Rect.
 func CropImage(imgObj image.Image, crop image.Rectangle) (image.Image, error) {
 	simg, ok := imgObj.(SubImager)
@@ -98,4 +114,9 @@ func CropImage(imgObj image.Image, crop image.Rectangle) (image.Image, error) {
 // CropToHeroName crops a given image to the section that contains the Hero Name.
 func CropToHeroName(imgObj image.Image) (image.Image, error) {
 	return CropImage(imgObj, cropHeroName)
+}
+
+// CropToMainStats crops a given image to the section that contains the main stats (non-percentage stats)
+func CropToMainStats(imgObj image.Image) (image.Image, error) {
+	return CropImage(imgObj, cropMainStats)
 }

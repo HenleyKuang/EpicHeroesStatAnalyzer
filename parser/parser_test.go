@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/otiai10/gosseract/v2"
 )
 
 func readFileToBytes(imgPath string) []byte {
@@ -31,12 +33,18 @@ func readFileToBytes(imgPath string) []byte {
 }
 
 func TestHeroNameFromBytes(t *testing.T) {
+	client := gosseract.NewClient()
+	client.SetTessdataPrefix("../traineddata/")
+	client.SetLanguage("eng")
+	client.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+	defer client.Close()
+
 	want := "Samurai Girl"
 	bytes := readFileToBytes("./data/toko_stats.jpg")
 	imgObj, _ := imageutils.BytesToImageObject(bytes)
 	croppedImgObj, _ := imageutils.CropToHeroName(imgObj)
 	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
-	got, err := HeroNameFromBytes(croppedImgBytes)
+	got, err := HeroNameFromBytes(client, croppedImgBytes)
 	if !strings.HasPrefix(got, want) || err != nil {
 		t.Fatalf(`HeroNameFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
 	}
