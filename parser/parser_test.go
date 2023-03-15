@@ -57,18 +57,20 @@ func TestMainStatsFromBytes(t *testing.T) {
 	client.SetWhitelist("0123456789")
 	defer client.Close()
 
-	want := `6278276
-11285601
-637280
-4468
-133`
+	want := map[string]int{
+		"Power": 6278276,
+		"HP":    11285601,
+		"ATK":   637280,
+		"Armor": 4468,
+		"Speed": 133,
+	}
 	bytes := readFileToBytes("./data/toko_stats.jpg")
 	imgObj, _ := imageutils.BytesToImageObject(bytes)
 	croppedImgObj, _ := imageutils.CropToMainStats(imgObj)
 	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
 	got, err := MainStatsFromBytes(client, croppedImgBytes)
-	if !strings.HasPrefix(got, want) || err != nil {
-		t.Fatalf(`MainStatsFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
+	if fmt.Sprint(got) != fmt.Sprint(want) || err != nil {
+		t.Fatalf(`MainStatsFromBytes() = %v, %v, want match for %v, nil`, got, err, want)
 	}
 }
 
@@ -79,26 +81,29 @@ func TestPercentageStatsFromBytes(t *testing.T) {
 	client.SetWhitelist("0123456789.")
 	defer client.Close()
 
-	want := `81
-4
-31
-15
-33
-0
-24
-28
-0
-0
-46
-5.6
-65
-23`
+	want := map[string]float32{
+		"Crit":                   81,
+		"Crit Resistance":        4,
+		"Crit DMG":               31,
+		"Crit Damage Resistance": 15,
+		"Skill DMG":              33,
+		"Holy DMG":               0,
+		"Effect Hit":             24,
+		"Effect Res":             28,
+		"Hit":                    0,
+		"Dodge":                  0,
+		"Accuracy":               46,
+		"Block":                  5.6,
+		"Broken Armor":           65,
+		"DMG Immune":             23,
+	}
+
 	bytes := readFileToBytes("./data/toko_stats.jpg")
 	imgObj, _ := imageutils.BytesToImageObject(bytes)
 	croppedImgObj, _ := imageutils.CropToPercentageStats(imgObj)
 	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
 	got, err := PercentageStatsFromBytes(client, croppedImgBytes)
-	if !strings.HasPrefix(got, want) || err != nil {
-		t.Fatalf(`PercentageStatsFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
+	if fmt.Sprint(got) != fmt.Sprint(want) || err != nil {
+		t.Fatalf(`PercentageStatsFromBytes() = %v, %v, want match for %v, nil`, got, err, want)
 	}
 }

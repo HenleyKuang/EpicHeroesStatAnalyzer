@@ -61,7 +61,7 @@ func main() {
 		os.Exit(3)
 	}
 	// Save cropped image.
-	// out, _ := os.Create("./playground/data/toko_stats_stats_cropped.jpg")
+	// out, _ := os.Create("./playground/data/toko_main_stats_cropped.jpg")
 	out, _ := os.Create("./playground/data/toko_percentage_stats_cropped.jpg")
 	defer out.Close()
 
