@@ -48,8 +48,8 @@ func main() {
 		os.Exit(3)
 	}
 	imgObj = imageutils.ImageObjToGrayScale(imgObj)
-	croppedImgObj, err := imageutils.CropToHeroName(imgObj)
-	// croppedImgObj, err := imageutils.CropToMainStats(imgObj)
+	// croppedImgObj, err := imageutils.CropToHeroName(imgObj)
+	croppedImgObj, err := imageutils.CropToMainStats(imgObj)
 	if err != nil {
 		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
@@ -71,12 +71,12 @@ func main() {
 		log.Println("[jpeg.Encode] ", err)
 	}
 	// Get Hero Name.
-	alphabetClient := gosseract.NewClient()
-	alphabetClient.SetTessdataPrefix("./traineddata/")
-	alphabetClient.SetLanguage("eng")
-	alphabetClient.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
-	defer alphabetClient.Close()
-	heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
+	// alphabetClient := gosseract.NewClient()
+	// alphabetClient.SetTessdataPrefix("./traineddata/")
+	// alphabetClient.SetLanguage("eng")
+	// alphabetClient.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+	// defer alphabetClient.Close()
+	// heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
 
 	// var base64Encoding string
 
@@ -99,13 +99,18 @@ func main() {
 	// fmt.Println(base64Encoding)
 
 	// heroName, err := parser.HeroNameFromBase64(base64Encoding); err != nil {
-	fmt.Println("[HeroNameFromBytes] ", err)
-	fmt.Println(heroName)
+	// fmt.Println("[HeroNameFromBytes] ", err)
+	// fmt.Println(heroName)
 
 	// Get stats
-	// stats, err := parser.MainStatsFromBytes(croppedImgBytes)
-	// fmt.Println("[MainStatsFromBytes] ", err)
-	// fmt.Println(stats)
+	digitsClient := gosseract.NewClient()
+	digitsClient.SetTessdataPrefix("./traineddata/")
+	digitsClient.SetLanguage("digitsall_layer")
+	digitsClient.SetWhitelist("0123456789")
+	defer digitsClient.Close()
+	stats, err := parser.MainStatsFromBytes(digitsClient, croppedImgBytes)
+	fmt.Println("[MainStatsFromBytes] ", err)
+	fmt.Println(stats)
 
 	// client := gosseract.NewClient()
 	// defer client.Close()
