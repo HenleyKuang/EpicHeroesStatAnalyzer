@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/base64"
 	"fmt"
 	"image/jpeg"
 	"log"
@@ -12,10 +11,6 @@ import (
 
 	"github.com/otiai10/gosseract/v2"
 )
-
-func toBase64(b []byte) string {
-	return base64.StdEncoding.EncodeToString(b)
-}
 
 func readFileToBytes() []byte {
 	// Read the entire file into a byte slice

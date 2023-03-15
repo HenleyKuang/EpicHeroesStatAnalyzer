@@ -57,7 +57,7 @@ func TestMainStatsFromBytes(t *testing.T) {
 	client.SetWhitelist("0123456789")
 	defer client.Close()
 
-	want := map[string]int{
+	want := map[string]interface{}{
 		"Power": 6278276,
 		"HP":    11285601,
 		"ATK":   637280,
@@ -81,7 +81,7 @@ func TestPercentageStatsFromBytes(t *testing.T) {
 	client.SetWhitelist("0123456789.")
 	defer client.Close()
 
-	want := map[string]float32{
+	want := map[string]interface{}{
 		"Crit":                   81,
 		"Crit Resistance":        4,
 		"Crit DMG":               31,

@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"main/api"
 	"os"
-	// _ "github.com/heroku/x/hmetrics/onload"
+
+	_ "github.com/heroku/x/hmetrics/onload"
 )
 
 func main() {
@@ -13,5 +15,5 @@ func main() {
 		log.Fatal("$PORT must be set")
 	}
 	fmt.Printf("Starting service in port: %s\n", port)
-	// api.HandleRequests(port)
+	api.HandleRequests(port)
 }

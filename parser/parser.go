@@ -23,7 +23,7 @@ func HeroNameFromBytes(client *gosseract.Client, imgAsBytes []byte) (string, err
 }
 
 // MainStatsFromBytes returns the list of the main stats (first 5 non-percentage stats) given the image in byte format.
-func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string]int, error) {
+func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string]interface{}, error) {
 	client.SetImageFromBytes(imgAsBytes)
 	stats, err := client.Text()
 	if err != nil {
@@ -33,7 +33,7 @@ func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string
 	if len(statsSplit) != 5 {
 		return nil, fmt.Errorf("Expected 5 stats to be parsed. Got %d", len(statsSplit))
 	}
-	statsMap := map[string]int{}
+	statsMap := map[string]interface{}{}
 	for idx, statName := range mainStatsOrder {
 		statValue, _ := strconv.Atoi(statsSplit[idx])
 		statsMap[statName] = statValue
@@ -42,7 +42,7 @@ func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string
 }
 
 // PercentageStatsFromBytes returns the list of the percentage stats given the image in byte format.
-func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string]float32, error) {
+func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string]interface{}, error) {
 	client.SetImageFromBytes(imgAsBytes)
 	stats, err := client.Text()
 	if err != nil {
@@ -52,7 +52,7 @@ func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[
 	if len(statsSplit) != 14 {
 		return nil, fmt.Errorf("Expected 14 stats to be parsed. Got %d", len(statsSplit))
 	}
-	statsMap := map[string]float32{}
+	statsMap := map[string]interface{}{}
 	for idx, statName := range percentageStatsOrder {
 		statValue, _ := strconv.ParseFloat(statsSplit[idx], 32)
 		statsMap[statName] = float32(statValue)
