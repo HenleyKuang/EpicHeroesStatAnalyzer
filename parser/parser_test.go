@@ -71,3 +71,34 @@ func TestMainStatsFromBytes(t *testing.T) {
 		t.Fatalf(`MainStatsFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
 	}
 }
+
+func TestPercentageStatsFromBytes(t *testing.T) {
+	client := gosseract.NewClient()
+	client.SetTessdataPrefix("../traineddata/")
+	client.SetLanguage("digitsall_layer")
+	client.SetWhitelist("0123456789.")
+	defer client.Close()
+
+	want := `81
+4
+31
+15
+33
+0
+24
+28
+0
+0
+46
+5.6
+65
+23`
+	bytes := readFileToBytes("./data/toko_stats.jpg")
+	imgObj, _ := imageutils.BytesToImageObject(bytes)
+	croppedImgObj, _ := imageutils.CropToPercentageStats(imgObj)
+	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
+	got, err := PercentageStatsFromBytes(client, croppedImgBytes)
+	if !strings.HasPrefix(got, want) || err != nil {
+		t.Fatalf(`PercentageStatsFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
+	}
+}

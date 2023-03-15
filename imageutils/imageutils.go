@@ -19,8 +19,9 @@ type SubImager interface {
 }
 
 var (
-	cropHeroName  = image.Rect(0, 40, 150, 60)
-	cropMainStats = image.Rect(250, 180, 330, 300)
+	cropHeroName        = image.Rect(0, 40, 150, 60)
+	cropMainStats       = image.Rect(250, 180, 330, 300)
+	cropPercentageStats = image.Rect(250, 290, 308, 600)
 )
 
 // Base64ToFileObject converts a base64 string representation of an iage to a file object.
@@ -119,4 +120,9 @@ func CropToHeroName(imgObj image.Image) (image.Image, error) {
 // CropToMainStats crops a given image to the section that contains the main stats (non-percentage stats)
 func CropToMainStats(imgObj image.Image) (image.Image, error) {
 	return CropImage(imgObj, cropMainStats)
+}
+
+// CropToPercentageStats crops a given image to the section that contains the stats with percentages.
+func CropToPercentageStats(imgObj image.Image) (image.Image, error) {
+	return CropImage(imgObj, cropPercentageStats)
 }

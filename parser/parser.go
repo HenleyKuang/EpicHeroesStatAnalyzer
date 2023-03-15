@@ -23,3 +23,13 @@ func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (string, er
 	}
 	return stats, nil
 }
+
+// PercentageStatsFromBytes returns the list of the percentage stats given the image in byte format.
+func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (string, error) {
+	client.SetImageFromBytes(imgAsBytes)
+	stats, err := client.Text()
+	if err != nil {
+		return "", err
+	}
+	return stats, nil
+}

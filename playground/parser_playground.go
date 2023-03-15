@@ -49,7 +49,8 @@ func main() {
 	}
 	imgObj = imageutils.ImageObjToGrayScale(imgObj)
 	// croppedImgObj, err := imageutils.CropToHeroName(imgObj)
-	croppedImgObj, err := imageutils.CropToMainStats(imgObj)
+	// croppedImgObj, err := imageutils.CropToMainStats(imgObj)
+	croppedImgObj, err := imageutils.CropToPercentageStats(imgObj)
 	if err != nil {
 		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
@@ -60,7 +61,8 @@ func main() {
 		os.Exit(3)
 	}
 	// Save cropped image.
-	out, _ := os.Create("./playground/data/toko_stats_stats_cropped.jpg")
+	// out, _ := os.Create("./playground/data/toko_stats_stats_cropped.jpg")
+	out, _ := os.Create("./playground/data/toko_percentage_stats_cropped.jpg")
 	defer out.Close()
 
 	var opts jpeg.Options
@@ -78,39 +80,15 @@ func main() {
 	// defer alphabetClient.Close()
 	// heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
 
-	// var base64Encoding string
-
-	// // Determine the content type of the image file
-	// mimeType := http.DetectContentType(bytes)
-
-	// // Prepend the appropriate URI scheme header depending
-	// // on the MIME type
-	// switch mimeType {
-	// case "image/jpeg":
-	// 	base64Encoding += "data:image/jpeg;base64,"
-	// case "image/png":
-	// 	base64Encoding += "data:image/png;base64,"
-	// }
-
-	// // Append the base64 encoded output
-	// base64Encoding += toBase64(bytes)
-
-	// // Print the full base64 representation of the image
-	// fmt.Println(base64Encoding)
-
-	// heroName, err := parser.HeroNameFromBase64(base64Encoding); err != nil {
-	// fmt.Println("[HeroNameFromBytes] ", err)
-	// fmt.Println(heroName)
-
 	// Get stats
-	digitsClient := gosseract.NewClient()
-	digitsClient.SetTessdataPrefix("./traineddata/")
-	digitsClient.SetLanguage("digitsall_layer")
-	digitsClient.SetWhitelist("0123456789")
-	defer digitsClient.Close()
-	stats, err := parser.MainStatsFromBytes(digitsClient, croppedImgBytes)
-	fmt.Println("[MainStatsFromBytes] ", err)
-	fmt.Println(stats)
+	// digitsClient := gosseract.NewClient()
+	// digitsClient.SetTessdataPrefix("./traineddata/")
+	// digitsClient.SetLanguage("digitsall_layer")
+	// digitsClient.SetWhitelist("0123456789")
+	// defer digitsClient.Close()
+	// stats, err := parser.MainStatsFromBytes(digitsClient, croppedImgBytes)
+	// fmt.Println("[MainStatsFromBytes] ", err)
+	// fmt.Println(stats)
 
 	// client := gosseract.NewClient()
 	// defer client.Close()
@@ -120,4 +98,13 @@ func main() {
 	// heroName, err := client.Text()
 	// fmt.Println(err)
 	// fmt.Println(heroName)
+
+	digitsClient := gosseract.NewClient()
+	digitsClient.SetTessdataPrefix("./traineddata/")
+	digitsClient.SetLanguage("digitsall_layer")
+	digitsClient.SetWhitelist("0123456789.")
+	defer digitsClient.Close()
+	stats, err := parser.PercentageStatsFromBytes(digitsClient, croppedImgBytes)
+	fmt.Println("[PercentageStatsFromBytes] ", err)
+	fmt.Println(stats)
 }
