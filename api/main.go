@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"main/dmgformula"
 	"main/imageutils"
 	"main/parser"
 	"net/http"
@@ -119,9 +120,18 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 	}
 	allStats := mergeMaps(mainStats, percentageStats)
+	dmgMap := map[string]int{
+		"Basic Atk DMG":             dmgformula.BasicAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"]),
+		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Crit"], allStats["Crit DMG"]),
+		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"], 0),
+		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], 0, allStats["Crit"], allStats["Crit DMG"]),
+		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Skill DMG"], 0),
+		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Skill DMG"], 0, allStats["Crit"], allStats["Crit DMG"]),
+	}
 	responseMap := map[string]interface{}{
-		"Hero":  heroName,
-		"Stats": allStats,
+		"Hero":          heroName,
+		"Stats":         allStats,
+		"Estimated Dmg": dmgMap,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseMap)
