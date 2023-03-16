@@ -122,17 +122,20 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 	allStats := mergeMaps(mainStats, percentageStats)
 	// Dmg stuff.
 	baseAtk := allStats["ATK"].(int)
-	brokenArmor := allStats["Broken Armor"].(int)
-	critRate := allStats["Crit"].(int)
-	critDmg := allStats["Crit DMG"].(int)
-	skillDmg := allStats["Skill DMG"].(int)
+	brokenArmor := allStats["Broken Armor"].(float32)
+	critRate := allStats["Crit"].(float32)
+	critDmg := allStats["Crit DMG"].(float32)
+	skillDmg := allStats["Skill DMG"].(float32)
+	// Hardcoded Multipliers.
+	tokoSkillAtk := 240
+	tokoPassiveAtk := 100
 	dmgMap := map[string]int{
 		"Basic Atk DMG":             dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor),
 		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, critRate, critDmg),
-		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, 0),
-		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, 0, critRate, critDmg),
-		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, 0),
-		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, 0, critRate, critDmg),
+		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, tokoPassiveAtk),
+		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, tokoPassiveAtk, critRate, critDmg),
+		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, tokoSkillAtk),
+		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, tokoSkillAtk, critRate, critDmg),
 	}
 	responseMap := map[string]interface{}{
 		"Hero":          heroName,
