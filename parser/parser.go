@@ -50,6 +50,7 @@ func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[
 	}
 	statsSplit := strings.Split(stats, "\n")
 	if len(statsSplit) != 14 {
+		fmt.Println(statsSplit)
 		return nil, fmt.Errorf("Expected 14 stats to be parsed. Got %d", len(statsSplit))
 	}
 	statsMap := map[string]interface{}{}
