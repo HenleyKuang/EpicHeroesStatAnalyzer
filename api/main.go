@@ -120,13 +120,19 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 	}
 	allStats := mergeMaps(mainStats, percentageStats)
+	// Dmg stuff.
+	baseAtk := allStats["ATK"].(int)
+	brokenArmor := allStats["Broken Armor"].(int)
+	critRate := allStats["Crit"].(int)
+	critDmg := allStats["Crit DMG"].(int)
+	skillDmg := allStats["Skill DMG"].(int)
 	dmgMap := map[string]int{
-		"Basic Atk DMG":             dmgformula.BasicAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"]),
-		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Crit"], allStats["Crit DMG"]),
-		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"], 0),
-		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], 0, allStats["Crit"], allStats["Crit DMG"]),
-		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Skill DMG"], 0),
-		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(allStats["ATK"], 0, allStats["Broken Armor"], allStats["Skill DMG"], 0, allStats["Crit"], allStats["Crit DMG"]),
+		"Basic Atk DMG":             dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor),
+		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, critRate, critDmg),
+		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, 0),
+		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, 0, critRate, critDmg),
+		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, 0),
+		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, 0, critRate, critDmg),
 	}
 	responseMap := map[string]interface{}{
 		"Hero":          heroName,
