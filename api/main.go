@@ -169,8 +169,8 @@ func HandleRequests(port string) {
 
 func readFileToBytes() []byte {
 	// Read the entire file into a byte slice
-	imgPath := "./playground/data/kinley_stats.jpeg"
-	// imgPath := "./playground/data/toko_stats.jpg"
+	// imgPath := "./playground/data/kinley_stats.jpeg"
+	imgPath := "./playground/data/toko_stats.jpg"
 	fileObj, err := os.Open(imgPath)
 	if err != nil {
 		fmt.Println("os.Open ", err)

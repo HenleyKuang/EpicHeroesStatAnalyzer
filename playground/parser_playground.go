@@ -44,8 +44,8 @@ func main() {
 	}
 	imgObj = imageutils.ImageObjToGrayScale(imgObj)
 	// croppedImgObj, err := imageutils.CropToHeroName(imgObj)
-	// croppedImgObj, err := imageutils.CropToMainStats(imgObj)
-	croppedImgObj, err := imageutils.CropToPercentageStats(imgObj)
+	croppedImgObj, err := imageutils.CropToMainStats(imgObj)
+	// croppedImgObj, err := imageutils.CropToPercentageStats(imgObj)
 	if err != nil {
 		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
@@ -57,7 +57,7 @@ func main() {
 	}
 	// Save cropped image.
 	// out, _ := os.Create("./playground/data/toko_main_stats_cropped.jpg")
-	out, _ := os.Create("./playground/data/kinley_percentage_stats_cropped.jpg")
+	out, _ := os.Create("./playground/data/kinley_main_stats_cropped.jpg")
 	defer out.Close()
 
 	var opts jpeg.Options
@@ -76,14 +76,14 @@ func main() {
 	// heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
 
 	// Get stats
-	// digitsClient := gosseract.NewClient()
-	// digitsClient.SetTessdataPrefix("./traineddata/")
-	// digitsClient.SetLanguage("digitsall_layer")
-	// digitsClient.SetWhitelist("0123456789")
-	// defer digitsClient.Close()
-	// stats, err := parser.MainStatsFromBytes(digitsClient, croppedImgBytes)
-	// fmt.Println("[MainStatsFromBytes] ", err)
-	// fmt.Println(stats)
+	digitsClient := gosseract.NewClient()
+	digitsClient.SetTessdataPrefix("./traineddata/")
+	digitsClient.SetLanguage("digitsall_layer")
+	digitsClient.SetWhitelist("0123456789")
+	defer digitsClient.Close()
+	stats, err := parser.MainStatsFromBytes(digitsClient, croppedImgBytes)
+	fmt.Println("[MainStatsFromBytes] ", err)
+	fmt.Println(stats)
 
 	// client := gosseract.NewClient()
 	// defer client.Close()
@@ -94,12 +94,12 @@ func main() {
 	// fmt.Println(err)
 	// fmt.Println(heroName)
 
-	digitsClient := gosseract.NewClient()
-	digitsClient.SetTessdataPrefix("./traineddata/")
-	digitsClient.SetLanguage("digitsall_layer")
-	digitsClient.SetWhitelist("0123456789.")
-	defer digitsClient.Close()
-	stats, err := parser.PercentageStatsFromBytes(digitsClient, croppedImgBytes)
-	fmt.Println("[PercentageStatsFromBytes] ", err)
-	fmt.Println(stats)
+	// digitsClient := gosseract.NewClient()
+	// digitsClient.SetTessdataPrefix("./traineddata/")
+	// digitsClient.SetLanguage("digitsall_layer")
+	// digitsClient.SetWhitelist("0123456789.")
+	// defer digitsClient.Close()
+	// stats, err := parser.PercentageStatsFromBytes(digitsClient, croppedImgBytes)
+	// fmt.Println("[PercentageStatsFromBytes] ", err)
+	// fmt.Println(stats)
 }

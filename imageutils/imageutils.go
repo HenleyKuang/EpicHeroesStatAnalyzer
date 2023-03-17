@@ -13,16 +13,24 @@ import (
 	"regexp"
 )
 
+var (
+	heroNameY1Ratio  float32 = 40 / 862.0
+	heroNameX2Ratio  float32 = 150 / 388.0
+	heroNameY2Ratio  float32 = 60 / 862.0
+	mainStatsX1Ratio float32 = 250 / 388.0
+	mainStatsY1Ratio float32 = 180 / 862.0
+	mainStatsX2Ratio float32 = 330 / 388.0
+	mainStatsY2Ratio float32 = 300 / 862.0
+	pctStatsX1Ratio  float32 = 250 / 388.0
+	pctStatsY1Ratio  float32 = 290 / 862.0
+	pctStatsX2Ratio  float32 = 308 / 388.0
+	pctStatsY2Ratio  float32 = 600 / 862.0
+)
+
 // SubImager is an interface for cropping the image.
 type SubImager interface {
 	SubImage(r image.Rectangle) image.Image
 }
-
-var (
-	cropHeroName        = image.Rect(0, 40, 150, 60)
-	cropMainStats       = image.Rect(250, 180, 330, 300)
-	cropPercentageStats = image.Rect(250, 290, 308, 600)
-)
 
 // Base64ToFileObject converts a base64 string representation of an iage to a file object.
 func Base64ToFileObject(imgAsBase64 string) (*os.File, error) {
@@ -114,15 +122,27 @@ func CropImage(imgObj image.Image, crop image.Rectangle) (image.Image, error) {
 
 // CropToHeroName crops a given image to the section that contains the Hero Name.
 func CropToHeroName(imgObj image.Image) (image.Image, error) {
+	w := float32(imgObj.Bounds().Dx())
+	h := float32(imgObj.Bounds().Dy())
+	// cropHeroName := image.Rect(0, 40, 150, 60)
+	cropHeroName := image.Rect(0, int(heroNameY1Ratio*h), int(heroNameX2Ratio*w), int(heroNameY2Ratio*h))
 	return CropImage(imgObj, cropHeroName)
 }
 
 // CropToMainStats crops a given image to the section that contains the main stats (non-percentage stats)
 func CropToMainStats(imgObj image.Image) (image.Image, error) {
+	w := float32(imgObj.Bounds().Dx())
+	h := float32(imgObj.Bounds().Dy())
+	// cropMainStats := image.Rect(250, 180, 330, 300)
+	cropMainStats := image.Rect(int(mainStatsX1Ratio*w), int(mainStatsY1Ratio*h), int(mainStatsX2Ratio*w), int(mainStatsY2Ratio*h))
 	return CropImage(imgObj, cropMainStats)
 }
 
 // CropToPercentageStats crops a given image to the section that contains the stats with percentages.
 func CropToPercentageStats(imgObj image.Image) (image.Image, error) {
+	w := float32(imgObj.Bounds().Dx())
+	h := float32(imgObj.Bounds().Dy())
+	// cropPercentageStats := image.Rect(250, 290, 308, 600)
+	cropPercentageStats := image.Rect(int(pctStatsX1Ratio*w), int(pctStatsY1Ratio*h), int(pctStatsX2Ratio*w), int(pctStatsY2Ratio*h))
 	return CropImage(imgObj, cropPercentageStats)
 }
