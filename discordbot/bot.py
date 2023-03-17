@@ -35,6 +35,11 @@ async def on_message(message):
 
     if username != "YouSnoozeYouLose":
         return
+    if len(mentions) == 0:
+        return
+    for mention in mentions:
+        if mention.name != "Prometheus Bot":
+            return
 
     toko_response = {
         "Estimated Dmg": {
@@ -77,7 +82,7 @@ async def on_message(message):
         return
 
     if channel == "bot-testing":
-        await message.channel.send(toko_response)
+        await message.reply(toko_response)
 
 
 client.run(TOKEN)

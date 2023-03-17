@@ -3,12 +3,14 @@ package imageutils
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/jpeg"
 	"image/png"
 	_ "image/png"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"regexp"
 )
@@ -145,4 +147,25 @@ func CropToPercentageStats(imgObj image.Image) (image.Image, error) {
 	// cropPercentageStats := image.Rect(250, 290, 308, 600)
 	cropPercentageStats := image.Rect(int(pctStatsX1Ratio*w), int(pctStatsY1Ratio*h), int(pctStatsX2Ratio*w), int(pctStatsY2Ratio*h))
 	return CropImage(imgObj, cropPercentageStats)
+}
+
+// LoadImageFromURL downloads a given url into an image object.
+func LoadImageFromURL(URL string) (image.Image, error) {
+	//Get the response bytes from the url
+	response, err := http.Get(URL)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != 200 {
+		return nil, errors.New("received non 200 response code")
+	}
+
+	img, _, err := image.Decode(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return img, nil
 }
