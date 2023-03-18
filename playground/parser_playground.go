@@ -14,7 +14,8 @@ import (
 
 func readFileToBytes() []byte {
 	// Read the entire file into a byte slice
-	imgPath := "./playground/data/kinley_stats.jpeg"
+	// imgPath := "./playground/data/toko_stats.jpg"
+	imgPath := "./playground/data/indira_stats.jpg"
 	fileObj, err := os.Open(imgPath)
 	if err != nil {
 		fmt.Println("os.Open ", err)
@@ -57,7 +58,7 @@ func main() {
 	}
 	// Save cropped image.
 	// out, _ := os.Create("./playground/data/toko_main_stats_cropped.jpg")
-	out, _ := os.Create("./playground/data/kinley_main_stats_cropped.jpg")
+	out, _ := os.Create("./playground/data/indira_main_stats_cropped.jpg")
 	defer out.Close()
 
 	var opts jpeg.Options

@@ -51,26 +51,61 @@ func TestHeroNameFromBytes(t *testing.T) {
 }
 
 func TestMainStatsFromBytes(t *testing.T) {
+	tests := []struct {
+		name     string
+		fileName string
+		want     map[string]interface{}
+	}{
+		{
+			name:     "toko main stats",
+			fileName: "./data/toko_stats.jpg",
+			want: map[string]interface{}{
+				"Power": 6278276,
+				"HP":    11285601,
+				"ATK":   637280,
+				"Armor": 4468,
+				"Speed": 133,
+			},
+		},
+		{
+			name:     "kinley main stats",
+			fileName: "./data/kinley_stats.jpeg",
+			want: map[string]interface{}{
+				"Power": 5912727,
+				"HP":    13621736,
+				"ATK":   459930,
+				"Armor": 4834,
+				"Speed": 127,
+			},
+		},
+		{
+			name:     "indira main stats",
+			fileName: "./data/indira_stats.jpg",
+			want: map[string]interface{}{
+				"Power": 6360034,
+				"HP":    10862119,
+				"ATK":   675963,
+				"Armor": 4610,
+				"Speed": 127,
+			},
+		},
+	}
+
 	client := gosseract.NewClient()
 	client.SetTessdataPrefix("../traineddata/")
 	client.SetLanguage("digitsall_layer")
 	client.SetWhitelist("0123456789")
 	defer client.Close()
 
-	want := map[string]interface{}{
-		"Power": 6278276,
-		"HP":    11285601,
-		"ATK":   637280,
-		"Armor": 4468,
-		"Speed": 133,
-	}
-	bytes := readFileToBytes("./data/toko_stats.jpg")
-	imgObj, _ := imageutils.BytesToImageObject(bytes)
-	croppedImgObj, _ := imageutils.CropToMainStats(imgObj)
-	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
-	got, err := MainStatsFromBytes(client, croppedImgBytes)
-	if fmt.Sprint(got) != fmt.Sprint(want) || err != nil {
-		t.Fatalf(`MainStatsFromBytes() = %v, %v, want match for %v, nil`, got, err, want)
+	for _, test := range tests {
+		bytes := readFileToBytes(test.fileName)
+		imgObj, _ := imageutils.BytesToImageObject(bytes)
+		croppedImgObj, _ := imageutils.CropToMainStats(imgObj)
+		croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
+		got, err := MainStatsFromBytes(client, croppedImgBytes)
+		if fmt.Sprint(got) != fmt.Sprint(test.want) || err != nil {
+			t.Fatalf(`%s: MainStatsFromBytes() = %v, %v, want match for %v, nil`, test.name, got, err, test.want)
+		}
 	}
 }
 

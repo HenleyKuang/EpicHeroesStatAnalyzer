@@ -22,7 +22,7 @@ var (
 	mainStatsX1Ratio float32 = 250 / 388.0
 	mainStatsY1Ratio float32 = 180 / 862.0
 	mainStatsX2Ratio float32 = 330 / 388.0
-	mainStatsY2Ratio float32 = 300 / 862.0
+	mainStatsY2Ratio float32 = 295 / 862.0
 	pctStatsX1Ratio  float32 = 250 / 388.0
 	pctStatsY1Ratio  float32 = 290 / 862.0
 	pctStatsX2Ratio  float32 = 308 / 388.0
@@ -126,7 +126,6 @@ func CropImage(imgObj image.Image, crop image.Rectangle) (image.Image, error) {
 func CropToHeroName(imgObj image.Image) (image.Image, error) {
 	w := float32(imgObj.Bounds().Dx())
 	h := float32(imgObj.Bounds().Dy())
-	// cropHeroName := image.Rect(0, 40, 150, 60)
 	cropHeroName := image.Rect(0, int(heroNameY1Ratio*h), int(heroNameX2Ratio*w), int(heroNameY2Ratio*h))
 	return CropImage(imgObj, cropHeroName)
 }
@@ -135,7 +134,6 @@ func CropToHeroName(imgObj image.Image) (image.Image, error) {
 func CropToMainStats(imgObj image.Image) (image.Image, error) {
 	w := float32(imgObj.Bounds().Dx())
 	h := float32(imgObj.Bounds().Dy())
-	// cropMainStats := image.Rect(250, 180, 330, 300)
 	cropMainStats := image.Rect(int(mainStatsX1Ratio*w), int(mainStatsY1Ratio*h), int(mainStatsX2Ratio*w), int(mainStatsY2Ratio*h))
 	return CropImage(imgObj, cropMainStats)
 }
@@ -144,7 +142,6 @@ func CropToMainStats(imgObj image.Image) (image.Image, error) {
 func CropToPercentageStats(imgObj image.Image) (image.Image, error) {
 	w := float32(imgObj.Bounds().Dx())
 	h := float32(imgObj.Bounds().Dy())
-	// cropPercentageStats := image.Rect(250, 290, 308, 600)
 	cropPercentageStats := image.Rect(int(pctStatsX1Ratio*w), int(pctStatsY1Ratio*h), int(pctStatsX2Ratio*w), int(pctStatsY2Ratio*h))
 	return CropImage(imgObj, cropPercentageStats)
 }

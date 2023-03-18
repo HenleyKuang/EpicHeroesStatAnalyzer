@@ -29,9 +29,10 @@ func MainStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[string
 	if err != nil {
 		return nil, err
 	}
+	stats = strings.Replace(stats, "\n\n", "\n", -1) // remove empty line.
 	statsSplit := strings.Split(stats, "\n")
 	if len(statsSplit) != 5 {
-		return nil, fmt.Errorf("Expected 5 stats to be parsed. Got %d", len(statsSplit))
+		return nil, fmt.Errorf("Expected 5 stats to be parsed. Got %d. %v", len(statsSplit), statsSplit)
 	}
 	statsMap := map[string]interface{}{}
 	for idx, statName := range mainStatsOrder {
@@ -48,6 +49,7 @@ func PercentageStatsFromBytes(client *gosseract.Client, imgAsBytes []byte) (map[
 	if err != nil {
 		return nil, err
 	}
+	stats = strings.Replace(stats, "\n\n", "\n", -1) // remove empty line.
 	statsSplit := strings.Split(stats, "\n")
 	if len(statsSplit) != 14 {
 		fmt.Println(statsSplit)
