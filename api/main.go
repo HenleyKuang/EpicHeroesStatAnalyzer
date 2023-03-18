@@ -196,7 +196,7 @@ func HandleRequests(port string) {
 
 func createErrorResponse(err error) []byte {
 	resp := make(map[string]string)
-	resp["message"] = fmt.Sprintf("Bad Request. Error: %s", err)
+	resp["message"] = fmt.Sprintf("Error: %s", err)
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
