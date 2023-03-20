@@ -39,14 +39,37 @@ func TestHeroNameFromBytes(t *testing.T) {
 	client.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
 	defer client.Close()
 
-	want := "Samurai Girl"
-	bytes := readFileToBytes("./data/toko_stats.jpg")
-	imgObj, _ := imageutils.BytesToImageObject(bytes)
-	croppedImgObj, _ := imageutils.CropToHeroName(imgObj)
-	croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
-	got, err := HeroNameFromBytes(client, croppedImgBytes)
-	if !strings.HasPrefix(got, want) || err != nil {
-		t.Fatalf(`HeroNameFromBytes() = %q, %v, want match for %#q, nil`, got, err, want)
+	tests := []struct {
+		name     string
+		fileName string
+		want     string
+	}{
+		{
+			name:     "toko name",
+			fileName: "./data/toko_stats.jpg",
+			want:     "Samurai Girl",
+		},
+		{
+			name:     "kinley name",
+			fileName: "./data/kinley_stats.jpeg",
+			want:     "Mecha Valkyrie",
+		},
+		{
+			name:     "indira name",
+			fileName: "./data/indira_stats.jpg",
+			want:     "Electric Arc",
+		},
+	}
+
+	for _, test := range tests {
+		bytes := readFileToBytes(test.fileName)
+		imgObj, _ := imageutils.BytesToImageObject(bytes)
+		croppedImgObj, _ := imageutils.CropToHeroName(imgObj)
+		croppedImgBytes, _ := imageutils.ImageObjectToBytes(croppedImgObj)
+		got, err := HeroNameFromBytes(client, croppedImgBytes)
+		if !strings.HasPrefix(got, test.want) || err != nil {
+			t.Fatalf(`%s: HeroNameFromBytes() = %q, %v, want match for %#q, nil`, test.name, got, err, test.want)
+		}
 	}
 }
 

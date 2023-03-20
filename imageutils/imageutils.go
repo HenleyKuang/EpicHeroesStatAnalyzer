@@ -18,7 +18,7 @@ import (
 var (
 	heroNameY1Ratio  float32 = 40 / 862.0
 	heroNameX2Ratio  float32 = 150 / 388.0
-	heroNameY2Ratio  float32 = 60 / 862.0
+	heroNameY2Ratio  float32 = 70 / 862.0
 	mainStatsX1Ratio float32 = 250 / 388.0
 	mainStatsY1Ratio float32 = 180 / 862.0
 	mainStatsX2Ratio float32 = 330 / 388.0

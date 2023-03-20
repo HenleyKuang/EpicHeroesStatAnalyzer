@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"main/dmgformula"
+	"main/herodata"
 	"main/imageutils"
 	"main/parser"
 	"net/http"
@@ -51,6 +52,15 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 		w.Write(createErrorResponse(fmt.Errorf("request is invalid. missing imageURL query parameter")))
 		return
 	}
+	heroNameValues := r.Form["heroName"]
+	heroName := ""
+	var heroDmgData *herodata.HeroDmg
+	if len(heroNameValues) != 0 {
+		if dmgData, exists := herodata.HeroDmgsMap[heroNameValues[0]]; exists {
+			heroDmgData = dmgData
+			heroName = heroNameValues[0]
+		}
+	}
 	imageURL := imageURLValues[0]
 	// 1. Get Image Obj.
 	// bytes := readFileToBytes()
@@ -74,30 +84,30 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 	}
 	imgObj = imageutils.ImageObjToGrayScale(imgObj)
 	// 2. Get Hero Name.
-	croppedHeroNameImgObj, err := imageutils.CropToHeroName(imgObj)
-	if err != nil {
-		fmt.Println("[CropToHeroName] ", err)
-		w.Header().Set("Error", err.Error())
-		w.WriteHeader(400)
-		w.Write(createErrorResponse(err))
-		return
-	}
-	croppedHeroNameImgBytes, err := imageutils.ImageObjectToBytes(croppedHeroNameImgObj)
-	if err != nil {
-		fmt.Println("[ImageObjectToBytes for HeroName] ", err)
-		w.Header().Set("Error", err.Error())
-		w.WriteHeader(400)
-		w.Write(createErrorResponse(err))
-		return
-	}
-	heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedHeroNameImgBytes)
-	if err != nil {
-		fmt.Println("[HeroNameFromBytes] ", err)
-		w.Header().Set("Error", err.Error())
-		w.WriteHeader(400)
-		w.Write(createErrorResponse(err))
-		return
-	}
+	// croppedHeroNameImgObj, err := imageutils.CropToHeroName(imgObj)
+	// if err != nil {
+	// 	fmt.Println("[CropToHeroName] ", err)
+	// 	w.Header().Set("Error", err.Error())
+	// 	w.WriteHeader(400)
+	// 	w.Write(createErrorResponse(err))
+	// 	return
+	// }
+	// croppedHeroNameImgBytes, err := imageutils.ImageObjectToBytes(croppedHeroNameImgObj)
+	// if err != nil {
+	// 	fmt.Println("[ImageObjectToBytes for HeroName] ", err)
+	// 	w.Header().Set("Error", err.Error())
+	// 	w.WriteHeader(400)
+	// 	w.Write(createErrorResponse(err))
+	// 	return
+	// }
+	// heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedHeroNameImgBytes)
+	// if err != nil {
+	// 	fmt.Println("[HeroNameFromBytes] ", err)
+	// 	w.Header().Set("Error", err.Error())
+	// 	w.WriteHeader(400)
+	// 	w.Write(createErrorResponse(err))
+	// 	return
+	// }
 	// 3. Get Main Stats.
 	croppedMainStatsImgObj, err := imageutils.CropToMainStats(imgObj)
 	if err != nil {
@@ -155,25 +165,42 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 	critRate := allStats["Crit"].(float32)
 	critDmg := allStats["Crit DMG"].(float32)
 	skillDmg := allStats["Skill DMG"].(float32)
-	// Hardcoded Multipliers.
-	tokoSkillAtk := 240
-	tokoPassiveAtk := 100
+	// Default basic, passive, and skill dmg percentages.
+	basicAtkPct := 100
+	passiveAtkPct := 100
+	skillAtkPct := 100
+	if heroName != "" {
+		basicAtkPct = heroDmgData.BasicDmgPct
+		passiveAtkPct = heroDmgData.PassiveDmgPct
+		skillAtkPct = heroDmgData.SkillDmgPct
+	}
 	dmgMap := map[string]int{
-		"Basic Atk DMG":             dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor),
-		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, critRate, critDmg),
-		"Passive Atk Dmg":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, tokoPassiveAtk),
-		"Passive Atk Dmg with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, tokoPassiveAtk, critRate, critDmg),
-		"Skill Atk Dmg":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, tokoSkillAtk),
-		"Skill Atk Dmg with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, tokoSkillAtk, critRate, critDmg),
+		"Basic Atk DMG":             dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor, basicAtkPct),
+		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, basicAtkPct, critRate, critDmg),
+		"Passive Atk DMG":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, passiveAtkPct),
+		"Passive Atk DMG with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, passiveAtkPct, critRate, critDmg),
+		"Skill Atk DMG":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct),
+		"Skill Atk DMG with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct, critRate, critDmg),
 	}
 	responseMap := map[string]interface{}{
 		"Hero":          heroName,
 		"Stats":         allStats,
-		"Estimated Dmg": dmgMap,
+		"Estimated DMG": dmgMap,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseMap)
 	fmt.Println("Endpoint Hit: heroAnalysis")
+}
+
+func allCommands(w http.ResponseWriter, r *http.Request) {
+	var allCommands []string
+	for _, heroName := range herodata.AllHeroes {
+		command := fmt.Sprintf("!%s", heroName)
+		allCommands = append(allCommands, command)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(allCommands)
+	fmt.Println("Endpoint Hit: allHeroesList")
 }
 
 // HandleRequests sets up the api endpoints.
@@ -188,6 +215,7 @@ func HandleRequests(port string) {
 		// 	"gameID", "{gameID:[0-9]+}",
 		// 	"statType", "{statType:[A-Z0-9]+}").
 		HandlerFunc(heroAnalysis)
+	myRouter.Path("/commands").HandlerFunc(allCommands)
 	// finally, instead of passing in nil, we want
 	// to pass in our newly created router as the second
 	// argument
