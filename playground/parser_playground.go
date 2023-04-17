@@ -16,7 +16,8 @@ func readFileToBytes() []byte {
 	// Read the entire file into a byte slice
 	// imgPath := "./playground/data/toko_stats.jpg"
 	// imgPath := "./playground/data/indira_stats.jpg"
-	imgPath := "./playground/data/kinley_stats.jpeg"
+	// imgPath := "./playground/data/kinley_stats.jpeg"
+	imgPath := "./playground/data/laura_stats.jpg"
 	fileObj, err := os.Open(imgPath)
 	if err != nil {
 		fmt.Println("os.Open ", err)
@@ -45,9 +46,9 @@ func main() {
 		os.Exit(3)
 	}
 	// imgObj = imageutils.ImageObjToGrayScale(imgObj)
-	croppedImgObj, err := imageutils.CropToHeroName(imgObj)
+	// croppedImgObj, err := imageutils.CropToHeroName(imgObj)
 	// croppedImgObj, err := imageutils.CropToMainStats(imgObj)
-	// croppedImgObj, err := imageutils.CropToPercentageStats(imgObj)
+	croppedImgObj, err := imageutils.CropToPercentageStats(imgObj)
 	if err != nil {
 		fmt.Println("[CropToHeroName] ", err)
 		os.Exit(3)
@@ -61,7 +62,7 @@ func main() {
 	// out, _ := os.Create("./playground/data/toko_main_stats_cropped.jpg")
 	// out, _ := os.Create("./playground/data/indira_main_stats_cropped.jpg")
 	// out, _ := os.Create("./playground/data/indira_hero_name_cropped.jpg")
-	out, _ := os.Create("./playground/data/kinley_hero_name_cropped.jpg")
+	out, _ := os.Create("./playground/data/laura_percentage_stats_cropped.jpg")
 	defer out.Close()
 
 	var opts jpeg.Options
@@ -72,14 +73,14 @@ func main() {
 		log.Println("[jpeg.Encode] ", err)
 	}
 	// Get Hero Name.
-	alphabetClient := gosseract.NewClient()
-	alphabetClient.SetTessdataPrefix("./traineddata/")
-	alphabetClient.SetLanguage("eng")
-	alphabetClient.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
-	defer alphabetClient.Close()
-	heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
-	fmt.Println(err)
-	fmt.Println(heroName)
+	// alphabetClient := gosseract.NewClient()
+	// alphabetClient.SetTessdataPrefix("./traineddata/")
+	// alphabetClient.SetLanguage("eng")
+	// alphabetClient.SetWhitelist("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+	// defer alphabetClient.Close()
+	// heroName, err := parser.HeroNameFromBytes(alphabetClient, croppedImgBytes)
+	// fmt.Println(err)
+	// fmt.Println(heroName)
 
 	// Get stats
 	// digitsClient := gosseract.NewClient()
@@ -91,12 +92,13 @@ func main() {
 	// fmt.Println("[MainStatsFromBytes] ", err)
 	// fmt.Println(stats)
 
-	// digitsClient := gosseract.NewClient()
-	// digitsClient.SetTessdataPrefix("./traineddata/")
-	// digitsClient.SetLanguage("digitsall_layer")
-	// digitsClient.SetWhitelist("0123456789.")
-	// defer digitsClient.Close()
-	// stats, err := parser.PercentageStatsFromBytes(digitsClient, croppedImgBytes)
-	// fmt.Println("[PercentageStatsFromBytes] ", err)
-	// fmt.Println(stats)
+	// Percentage Stats
+	digitsClient := gosseract.NewClient()
+	digitsClient.SetTessdataPrefix("./traineddata/")
+	digitsClient.SetLanguage("digitsall_layer")
+	digitsClient.SetWhitelist("0123456789.")
+	defer digitsClient.Close()
+	stats, err := parser.PercentageStatsFromBytes(digitsClient, croppedImgBytes)
+	fmt.Println("[PercentageStatsFromBytes] ", err)
+	fmt.Println(stats)
 }

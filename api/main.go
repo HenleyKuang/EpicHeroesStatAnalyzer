@@ -175,12 +175,14 @@ func heroAnalysis(w http.ResponseWriter, r *http.Request) {
 		skillAtkPct = heroDmgData.SkillDmgPct
 	}
 	dmgMap := map[string]int{
-		"Basic Atk DMG":             dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor, basicAtkPct),
-		"Basic Atk DMG with Crit":   dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, basicAtkPct, critRate, critDmg),
-		"Passive Atk DMG":           dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, passiveAtkPct),
-		"Passive Atk DMG with Crit": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, passiveAtkPct, critRate, critDmg),
-		"Skill Atk DMG":             dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct),
-		"Skill Atk DMG with Crit":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct, critRate, critDmg),
+		"Basic Atk DMG":                    dmgformula.BasicAtkDmg(baseAtk, 0, brokenArmor, basicAtkPct, 0),
+		"Basic Atk DMG with Crit":          dmgformula.BasicAtkCritDmg(baseAtk, 0, brokenArmor, basicAtkPct, critRate, critDmg, 0),
+		"Passive Atk DMG":                  dmgformula.PassiveAtkDmg(baseAtk, 0, brokenArmor, passiveAtkPct, 0),
+		"Passive Atk DMG with Crit":        dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, passiveAtkPct, critRate, critDmg, 0),
+		"Skill Atk DMG":                    dmgformula.SkillAtkDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct, 0),
+		"Skill Atk DMG with Crit":          dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct, critRate, critDmg, 0),
+		"Passive Atk DMG with Crit, 30 DI": dmgformula.PassiveAtkCritDmg(baseAtk, 0, brokenArmor, passiveAtkPct, critRate, critDmg, 30),
+		"Skill Atk DMG with Crit, 30 DI":   dmgformula.SkillAtkCritDmg(baseAtk, 0, brokenArmor, skillDmg, skillAtkPct, critRate, critDmg, 30),
 	}
 	responseMap := map[string]interface{}{
 		"Hero":          heroName,

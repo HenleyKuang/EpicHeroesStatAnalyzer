@@ -11,6 +11,7 @@ type HeroDmg struct {
 const (
 	SamuraiGirl = "toko"
 	GodSlayer   = "gs"
+	Laura       = "laura"
 )
 
 // HeroDmgsMap is a mapping of all heroes to their dmg map.
@@ -24,6 +25,11 @@ var HeroDmgsMap = map[string]*HeroDmg{
 		/* BasicDmgPct */ 200,
 		/* PassiveDmgPct */ 200,
 		/* SkillDmgPct */ 0,
+	),
+	Laura: heroDmgObj(
+		/* BasicDmgPct */ 100,
+		/* PassiveDmgPct */ 220,
+		/* SkillDmgPct */ 400,
 	),
 }
 

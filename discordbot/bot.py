@@ -55,6 +55,11 @@ async def on_message(message):
 
     p = re.compile(COMMAND_REGEX)
     m = p.search(user_message)
+    if m is None:
+        response = get_all_commands()
+        await message.reply(response)
+        return
+
     command = m.group("command")
     if command:
         print(f"Command: {command}")
@@ -117,11 +122,23 @@ def format_reply(response):
     passive_dmg_crit = response["Estimated DMG"]["Passive Atk DMG with Crit"]
     skill_dmg = response["Estimated DMG"]["Skill Atk DMG"]
     skill_dmg_crit = response["Estimated DMG"]["Skill Atk DMG with Crit"]
+    # reply = (
+    #     f"Your hero has an estimated basic attack damage of **{basic_dmg:,}**, passive attack damage of **{passive_dmg:,}**, and skill attack damage of **{skill_dmg:,}**. "
+    #     + f"With a **{crit_rate}%** chance of CRIT, your hero's basic attack damage would increase to **{basic_dmg_crit:,}**, passive attack damage increases to **{passive_dmg_crit:,}**, "
+    #     + f"and skill attack damage increases to **{skill_dmg_crit:,}**.\n"
+    #     + "Note: This does not account for several factors including enemy's DMG Immune, your hero's passive buffs, or their skill dmg multipliers!"
+    # )
     reply = (
-        f"Your hero has an estimated basic attack damage of **{basic_dmg:,}**, passive attack damage of **{passive_dmg:,}**, and skill attack damage of **{skill_dmg:,}**. "
-        + f"With a **{crit_rate}%** chance of CRIT, your hero's basic attack damage would increase to **{basic_dmg_crit:,}**, passive attack damage increases to **{passive_dmg_crit:,}**, "
-        + f"and skill attack damage increases to **{skill_dmg_crit:,}**.\n"
-        + "Note: This does not account for several factors including enemy's DMG Immune, your hero's passive buffs, or their skill dmg multipliers!"
+    f"```╔═════════════════════════════════════════════════╗\n"
+    +   "║            Prometheus Damage Analysis           ║\n"
+    +   "╠═════════════╤═══════════╤═══════════╤═══════════╣\n"
+    +   "║ Crit?       │   Basic   │  Passive  │   Skill   ║\n"
+    +   "╟─────────────┼───────────┼───────────┼───────────╢\n"
+    +  f"║ No Crit     │{basic_dmg:11,d}|{passive_dmg:11,d}|{skill_dmg:11,d}║\n"
+    +   "╟─────────────┼───────────┼───────────┼───────────╢\n"
+    +  f"║ Crit        |{basic_dmg_crit:11,d}|{passive_dmg_crit:11,d}|{skill_dmg_crit:11,d}║\n"
+    +   "╚═════════════╧═══════════╧═══════════╧═══════════╝\n```"
+    + "Note: This does not account for several factors including enemy's DMG Immune, your hero's passive buffs, or their skill dmg multipliers!"
     )
     return reply
 
